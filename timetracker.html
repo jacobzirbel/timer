@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <script>
+//first commit
+    let startMin = 0;
+    let endMin = 0;
+    let totalMin = 0;
+    let count = 0;
+
+function displayTimeAndComment(){
+    count++;
+    let value = document.getElementById("text").value;
+    let e1 =  document.getElementById('pct');
+    let d = new Date();
+    let h = d.getHours();
+    let m = d.getMinutes();
+    let mins = h*60 + m;
+
+    if (m<10){
+         m = "0" + m;
+    }
+    
+    e1.textContent += h + ":" + m;
+    e1.textContent +=  value;
+    e1.textContent += "\r\n";
+
+    if(count%2 === 0){
+        e1.textContent += "X"
+        endMin = mins;
+        totalMin = totalMin + endMin - startMin;
+    }
+    else{
+        startMin = mins;
+    }
+    
+  
+    
+}
+
+function clearText(){
+    alert('about to clear text');
+    let e1 = document.getElementById('pct');
+    e1.textContent = "";
+}
+
+
+
+function endTime(){
+
+   // console.log(mins);
+    //endTime = time in minutes
+    //tempTime = endTime - startTime
+    //totalTime = tempTime + totalTime
+}
+
+function summarizeDay(){
+    alert(totalMin);
+}
+
+
+    </script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <h1 id="wl">hello</h1>
+    <div id="pct"></div>
+    <div id="wins"></div>
+    <div id="losses"></div>
+
+    <button onclick="displayTimeAndComment()">Enter</button>
+    <button onclick="clearText()">Clear</button>
+    <button onclick="endTime()">End</button>
+    <button onclick="summarizeDay()">Summarize</button>
+
+
+    <form id="textfield">
+            <input type ="text" id="text" value="" />
+        </form>
+    
+</body>
+
+</html>
