@@ -2,7 +2,7 @@
 
 <head>
     <script>
-//first commit
+
     let startMin = 0;
     let endMin = 0;
     let totalMin = 0;
@@ -10,8 +10,8 @@
 
 function displayTimeAndComment(){
     count++;
-    let value = document.getElementById("text").value;
-    let e1 =  document.getElementById('pct');
+    let note = document.getElementById("text").value;
+    let e1 =  document.getElementById('note');
     let d = new Date();
     let h = d.getHours();
     let m = d.getMinutes();
@@ -22,11 +22,13 @@ function displayTimeAndComment(){
     }
     
     e1.textContent += h + ":" + m;
-    e1.textContent +=  value;
+    e1.textContent +=  note;
     e1.textContent += "\r\n";
 
     if(count%2 === 0){
-        e1.textContent += "X"
+        e1.textContent += "<> "
+      
+        //find a way to add as a <br> instead
         endMin = mins;
         totalMin = totalMin + endMin - startMin;
     }
@@ -39,23 +41,23 @@ function displayTimeAndComment(){
 }
 
 function clearText(){
+    startMin = 0;
+    endMin = 0;
+    totalMin = 0;
+    count = 0;
     alert('about to clear text');
-    let e1 = document.getElementById('pct');
+    let e1 = document.getElementById('note');
+    let e2 = document.getElementById('xx');
     e1.textContent = "";
+    e2.textContent = "";
 }
 
 
-
-function endTime(){
-
-   // console.log(mins);
-    //endTime = time in minutes
-    //tempTime = endTime - startTime
-    //totalTime = tempTime + totalTime
-}
 
 function summarizeDay(){
     alert(totalMin);
+    let e = document.getElementById('xx');
+    e.textContent = totalMin;
 }
 
 
@@ -66,14 +68,14 @@ function summarizeDay(){
 </head>
 
 <body>
-    <h1 id="wl">hello</h1>
-    <div id="pct"></div>
-    <div id="wins"></div>
-    <div id="losses"></div>
+    <h1 id="top">hello</h1>
+    <div id="note"></div>
+    <div id="xx"></div>
+    <div id="xxx"></div>
 
     <button onclick="displayTimeAndComment()">Enter</button>
     <button onclick="clearText()">Clear</button>
-    <button onclick="endTime()">End</button>
+  <!--  <button onclick="endTime()">End</button>-->
     <button onclick="summarizeDay()">Summarize</button>
 
 
