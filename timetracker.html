@@ -59,6 +59,7 @@ function overrideTime(){
 
 
 function clearText(){
+    alert(totalMin);
     startMin = 0;
     endMin = 0;
     totalMin = 0;
@@ -73,13 +74,15 @@ function clearText(){
 
 
 function summarizeDay(){
-    let e = document.getElementById('xx');
-    e.textContent = totalMin;
+    alert(totalMin);
 
     let i = 0;
     let j = 0;
     while(timeArray[i] !== undefined){
         i++;
+        if(j>100){
+            break;
+        }
     }
 
     i = i - 1;
@@ -96,9 +99,8 @@ function summarizeDay(){
         i = i - 2;
     }
     totalHrs = (totalHrs).toFixed(1);
-    console.log(totalHrs);
-    alert(totalMin);
     alert(totalHrs);
+    totalHrs = 0;
 
 }
 
