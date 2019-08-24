@@ -3,6 +3,23 @@
 <head>
     <script>
 
+function showTime() {
+  var today = new Date();
+  var h = today.getHours();
+  var m = today.getMinutes();
+  var s = today.getSeconds();
+  m = checkTime(m);
+  s = checkTime(s);
+  document.getElementById('clock').innerHTML =
+  h + ":" + m;
+  var t = setTimeout(showTime, 5000);
+
+}
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  return i;
+}
+
     let startMin = 0;
     let endMin = 0;
     let totalMin = 0;
@@ -11,9 +28,13 @@
     let timeArray = [];
 
 function displayTimeAndComment(){
-    count++;
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
+    let e2 = document.getElementById('timearray');
+    if(count < 0){
+        e1.textContent = "";
+    }
+    count++;
     let d = new Date();
     let h = d.getHours();
     let m = d.getMinutes();
@@ -25,7 +46,7 @@ function displayTimeAndComment(){
     }
 
     timeArray[count] = hrs;
-    console.log(timeArray);
+    e2.textContent = timeArray;
 
     e1.textContent += h + ":" + m;
     e1.textContent +=  note;
@@ -40,44 +61,53 @@ function displayTimeAndComment(){
      //find a way to add as a <br> instead
         endMin = mins;
         totalMin = totalMin + endMin - startMin;
-        
 
-        console.log(totalHrs * 60, totalMin);
 
     }
     
 }
 
 function overrideTime(){
+    let e1 = document.getElementById('timearray');
     let newHour = document.getElementById("orhrs").value;
     let newIndex = document.getElementById('ordex').value;
     timeArray[newIndex] = newHour;
-    console.log(newHour, newIndex);
+    e1.textContent = timeArray;
+
 }
   
     
 
 
 function clearText(){
-    alert(totalMin);
+    totalHrs = getHours();
+    let e1 = document.getElementById('note');
+    let e2 = document.getElementById('xx');
+    e1.textContent = totalMin + " minutes" + " " + "Edited: " + totalHrs + " hours";
+    e2.textContent = "";
     startMin = 0;
     endMin = 0;
     totalMin = 0;
-    count = 0;
-    alert('about to clear text');
-    let e1 = document.getElementById('note');
-    let e2 = document.getElementById('xx');
-    e1.textContent = "";
-    e2.textContent = "";
+    totalHrs = 0;
+    count = -1;
+    timeArray = [];
 }
 
 
 
 function summarizeDay(){
-    alert(totalMin);
+    let e1 = document.getElementById('summary');
+    totalHrs = getHours();
+    e1.textContent = "Summary: " + totalMin*60 + " hours" + " " + "Edited: " + totalHrs + " hours";
+    totalHrs = 0;
 
+}
+
+function getHours(){
+    totalHrs = 0;
     let i = 0;
     let j = 0;
+    console.log(timeArray);
     while(timeArray[i] !== undefined){
         i++;
         if(j>100){
@@ -98,22 +128,20 @@ function summarizeDay(){
         totalHrs += timeArray[i] - timeArray[i-1];
         i = i - 2;
     }
-    totalHrs = (totalHrs).toFixed(1);
-    alert(totalHrs);
-    totalHrs = 0;
-
+    console.log(totalHrs);
+    return totalHrs.toFixed(2);
 }
-
 
     </script>
     <style>
 
+
     </style>
 </head>
 
-<body>
-    <h1 id="top">hello</h1>
-    <div id="note"></div>
+<body onload="showTime()">
+    <h1 id="clock"></h1>
+    <div id="note">Click Enter to Start</div>
     <div id="xx"></div>
     <div id="xxx"></div>
 
@@ -126,15 +154,20 @@ function summarizeDay(){
     <form id="textfield">
             <input type ="text" id="text" value="" />
     </form>
+    <div id="timearray">[ ]</div>
+    <div>Index, Value</div>
+    <div style="display: flex;">
+            <form id="orindex">
+                    <input type = "number" id="ordex" value="" />
+            </form>
+            <form id="orhours">
+                    <input type ="number" id="orhrs" value="" />
+                </form>
+           </div>
     
-    <form id="orindex">
-        <input type = "number" id="ordex" value="" />
-    </form>
-    <form id="orhours">
-        <input type ="number" id="orhrs" value="" />
-    </form>
 
     <button onclick="overrideTime()">Override</button>
+    <div id=summary>Summary: </div>
 
 
     
