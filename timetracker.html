@@ -20,12 +20,16 @@ function checkTime(i) {
   return i;
 }
 
-    let startMin = 0;
-    let endMin = 0;
-    let totalMin = 0;
-    let totalHrs = 0;
-    let count = -1;
-    let timeArray = [];
+    let startMin = 0,
+        endMin = 0,
+        totalMin = 0,
+        totalHrs = 0,
+        count = -1,
+        timeArray = [],
+        timeArrayString = [],
+        dispTimeMins = 0,
+        dispTimeHrs = 0,
+        dispTimeStr = "";
 
 function displayTimeAndComment(){
     let note = document.getElementById("text").value;
@@ -38,17 +42,23 @@ function displayTimeAndComment(){
     let d = new Date();
     let h = d.getHours();
     let m = d.getMinutes();
-    let hrs = (h + (m/60)).toFixed(2);
+    let hrs = (h + (m/60));
     let mins = h*60 + m;
-
-    if (m<10){
-         m = "0" + m;
-    }
-
     timeArray[count] = hrs;
-    e2.textContent = timeArray;
+    dispTimeHrs = Math.floor(hrs);
+    dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
+    dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
+    timeArrayString[count] = dispTimeStr;
 
-    e1.textContent += h + ":" + m;
+    //debugger;
+    e2.textContent = "";;
+    for(i = 0; i <= count; i++){
+        e2.textContent += timeArrayString[i] + "    ";
+    }
+    
+
+    
+    e1.textContent += timeArrayString[count];
     e1.textContent +=  note;
     e1.textContent += "\r\n";
 
@@ -68,11 +78,22 @@ function displayTimeAndComment(){
 }
 
 function overrideTime(){
+    debugger;
     let e1 = document.getElementById('timearray');
     let newHour = document.getElementById("orhrs").value;
     let newIndex = document.getElementById('ordex').value;
     timeArray[newIndex] = newHour;
-    e1.textContent = timeArray;
+
+    let hrs = newHour;
+    dispTimeHrs = Math.floor(hrs);
+    dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
+    dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
+    timeArrayString[newIndex] = dispTimeStr;
+    e1.textContent = "";;
+    for(i = 0; i <= count; i++){
+        e1.textContent += timeArrayString[i] + "    ";
+    }
+    
 
 }
   
@@ -91,6 +112,7 @@ function clearText(){
     totalHrs = 0;
     count = -1;
     timeArray = [];
+    timeArrayString = [];
 }
 
 
@@ -98,7 +120,7 @@ function clearText(){
 function summarizeDay(){
     let e1 = document.getElementById('summary');
     totalHrs = getHours();
-    e1.textContent = "Summary: " + totalMin*60 + " hours" + " " + "Edited: " + totalHrs + " hours";
+    e1.textContent = "Summary: " + totalMin/60 + " hours" + " " + "Edited: " + totalHrs + " hours";
     totalHrs = 0;
 
 }
@@ -130,6 +152,15 @@ function getHours(){
     }
     console.log(totalHrs);
     return totalHrs.toFixed(2);
+}
+
+function createTimeString(h, m){
+    if (m < 10){
+        return h + ":" + "0" + m;
+    }
+    else{
+        return h + ":" + m;
+    }
 }
 
     </script>
