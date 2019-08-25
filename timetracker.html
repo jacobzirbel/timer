@@ -29,7 +29,8 @@ function checkTime(i) {
         timeArrayString = [],
         dispTimeMins = 0,
         dispTimeHrs = 0,
-        dispTimeStr = "";
+        dispTimeStr = "",
+        pctWork = 0;
 
 function displayTimeAndComment(){
     let note = document.getElementById("text").value;
@@ -50,7 +51,6 @@ function displayTimeAndComment(){
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[count] = dispTimeStr;
 
-    //debugger;
     e2.textContent = "";;
     for(i = 0; i <= count; i++){
         e2.textContent += timeArrayString[i] + "    ";
@@ -78,7 +78,6 @@ function displayTimeAndComment(){
 }
 
 function overrideTime(){
-    debugger;
     let e1 = document.getElementById('timearray');
     let newHour = document.getElementById("orhrs").value;
     let newIndex = document.getElementById('ordex').value;
@@ -89,7 +88,7 @@ function overrideTime(){
     dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[newIndex] = dispTimeStr;
-    e1.textContent = "";;
+    e1.textContent = "";
     for(i = 0; i <= count; i++){
         e1.textContent += timeArrayString[i] + "    ";
     }
@@ -101,7 +100,7 @@ function overrideTime(){
 
 
 function clearText(){
-    totalHrs = getHours();
+    totalHrs = getHrs();
     let e1 = document.getElementById('note');
     let e2 = document.getElementById('xx');
     e1.textContent = totalMin + " minutes" + " " + "Edited: " + totalHrs + " hours";
@@ -113,37 +112,30 @@ function clearText(){
     count = -1;
     timeArray = [];
     timeArrayString = [];
+    dispTimeMins = 0,
+    dispTimeHrs = 0,
+    dispTimeStr = "",
+    pctWork = 0;
 }
 
 
 
 function summarizeDay(){
     let e1 = document.getElementById('summary');
-    totalHrs = getHours();
-    e1.textContent = "Summary: " + totalMin/60 + " hours" + " " + "Edited: " + totalHrs + " hours";
+    totalHrs = getHrs();
+    pctWork = getPercent(totalHrs);
+
+    e1.textContent = "Summary: " + totalMin/60 + " hours" + " " + "Edited: " + totalHrs + " hours Percent: " + pctWork;
     totalHrs = 0;
 
 }
 
-function getHours(){
+function getHrs(){
     totalHrs = 0;
-    let i = 0;
-    let j = 0;
-    console.log(timeArray);
-    while(timeArray[i] !== undefined){
-        i++;
-        if(j>100){
-            break;
-        }
-    }
-
-    i = i - 1;
+    let i = timeArray.length - 1;
 
     while(i>-1){
-        j++;
-        if(j>10){
-            break;
-        }
+        
         if(i%2 === 0){
             i = i - 1;
         }
@@ -152,6 +144,15 @@ function getHours(){
     }
     console.log(totalHrs);
     return totalHrs.toFixed(2);
+}
+
+function getPercent(tw){
+
+    let i = timeArray.length - 1;
+    let pct = 0;
+   
+    pct = ((tw)/(timeArray[i]-timeArray[0]))*100
+    return pct;
 }
 
 function createTimeString(h, m){
