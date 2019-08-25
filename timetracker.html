@@ -4,15 +4,15 @@
     <script>
 
 function showTime() {
-  var today = new Date();
-  var h = today.getHours();
-  var m = today.getMinutes();
-  var s = today.getSeconds();
+  let today = new Date();
+  let h = today.getHours();
+  let m = today.getMinutes();
+  let s = today.getSeconds();
   m = checkTime(m);
   s = checkTime(s);
   document.getElementById('clock').innerHTML =
-  h + ":" + m;
-  var t = setTimeout(showTime, 5000);
+  h + ":" + m + ":" + s;
+  let t = setTimeout(showTime, 500);
 
 }
 function checkTime(i) {
@@ -20,17 +20,18 @@ function checkTime(i) {
   return i;
 }
 
-    let startMin = 0,
-        endMin = 0,
-        totalMin = 0,
-        totalHrs = 0,
-        count = -1,
-        timeArray = [],
-        timeArrayString = [],
-        dispTimeMins = 0,
-        dispTimeHrs = 0,
-        dispTimeStr = "",
-        pctWork = 0;
+//initialize variables
+let startMin = 0,
+    endMin = 0,
+    totalMin = 0,
+    totalHrs = 0,
+    count = -1,
+    timeArray = [],
+    timeArrayString = [],
+    dispTimeMins = 0,
+    dispTimeHrs = 0,
+    dispTimeStr = "",
+    pctWork = 0;
 
 function displayTimeAndComment(){
     let note = document.getElementById("text").value;
@@ -45,34 +46,34 @@ function displayTimeAndComment(){
     let m = d.getMinutes();
     let hrs = (h + (m/60));
     let mins = h*60 + m;
+
     timeArray[count] = hrs;
     dispTimeHrs = Math.floor(hrs);
     dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[count] = dispTimeStr;
 
-    e2.textContent = "";;
+    e2.textContent = "";
     for(i = 0; i <= count; i++){
         e2.textContent += timeArrayString[i] + "    ";
     }
     
-
-    
-    e1.textContent += timeArrayString[count];
-    e1.textContent +=  note;
+    e1.textContent  += timeArrayString[count];
+   // e1.textContent +=  note;
     e1.textContent += "\r\n";
 
     if(count%2 === 0){
         startMin = mins;
     }
     else{
-        e1.textContent += "<> "
+        debugger;
+        endMin = mins;
+        let sectionMins = endMin - startMin;
+        e1.textContent += "<" + note + " " + sectionMins + "> "
       
      //find a way to add as a <br> instead
-        endMin = mins;
+        
         totalMin = totalMin + endMin - startMin;
-
-
     }
     
 }
@@ -95,16 +96,16 @@ function overrideTime(){
     
 
 }
-  
-    
 
 
 function clearText(){
     totalHrs = getHrs();
     let e1 = document.getElementById('note');
     let e2 = document.getElementById('xx');
+    let e3 = document.getElementById('timearray')
     e1.textContent = totalMin + " minutes" + " " + "Edited: " + totalHrs + " hours";
     e2.textContent = "";
+    e3.textContent = "[ ]";
     startMin = 0;
     endMin = 0;
     totalMin = 0;
@@ -122,10 +123,11 @@ function clearText(){
 
 function summarizeDay(){
     let e1 = document.getElementById('summary');
-    totalHrs = getHrs();
+    totalHrs = getHrs()
     pctWork = getPercent(totalHrs);
+    totalHrs = totalHrs.toFixed(2);
 
-    e1.textContent = "Summary: " + totalMin/60 + " hours" + " " + "Edited: " + totalHrs + " hours Percent: " + pctWork;
+    e1.textContent = "Summary: " + (totalMin/60).toFixed(5) + " hours" + " " + "Edited: " + totalHrs + " hours Percent: " + pctWork;
     totalHrs = 0;
 
 }
@@ -143,7 +145,7 @@ function getHrs(){
         i = i - 2;
     }
     console.log(totalHrs);
-    return totalHrs.toFixed(2);
+    return totalHrs;
 }
 
 function getPercent(tw){
