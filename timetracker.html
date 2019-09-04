@@ -13,19 +13,19 @@ function showTime() {
   document.getElementById('clock').innerHTML =
   h + ":" + m + ":" + s;
   let t = setTimeout(showTime, 500);
-
 }
 function checkTime(i) {
-  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  if (i < 10) {i = "0" + i};
   return i;
 }
 
-//initialize variables
 let startMin = 0,
     endMin = 0,
     totalMin = 0,
     totalHrs = 0,
     count = -1,
+    dispCount = 1,
+    oCount = 1,
     timeArray = [],
     timeArrayString = [],
     dispTimeMins = 0,
@@ -34,11 +34,17 @@ let startMin = 0,
     pctWork = 0;
 
 function displayTimeAndComment(){
+    if(count >= 0){
+        summarizeDay();
+    }
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
-    let e2 = document.getElementById('timearray');
+    //let e2 = document.getElementById('timearray');
     if(count < 0){
         e1.textContent = "";
+    }
+    if (note == "") {
+        note = "Default";
     }
     count++;
     let d = new Date();
@@ -53,47 +59,73 @@ function displayTimeAndComment(){
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[count] = dispTimeStr;
 
-    e2.textContent = "";
-    for(i = 0; i <= count; i++){
-        e2.textContent += timeArrayString[i] + "    ";
+    //e2.textContent = "";
+    //for(i = 0; i <= count; i++){
+    //    e2.textContent += timeArrayString[i] + "    ";
+    //}
+
+    if (count % 2 == 0) {
+        e1.innerHTML += dispCount + " : ";
+        dispCount++;
     }
-    
-    e1.textContent  += timeArrayString[count];
-   // e1.textContent +=  note;
-    e1.textContent += "\r\n";
+    e1.innerHTML += timeArrayString[count] + " ";
+   
 
     if(count%2 === 0){
         startMin = mins;
     }
     else{
-        debugger;
         endMin = mins;
         let sectionMins = endMin - startMin;
-        e1.textContent += "<" + note + " " + sectionMins + "> "
-      
-     //find a way to add as a <br> instead
-        
+        //jzjz
+        e1.innerHTML += note + " for: ";
+        e1.innerHTML += " " + sectionMins + " mins <br />"
+
         totalMin = totalMin + endMin - startMin;
     }
     
 }
-
-function overrideTime(){
-    let e1 = document.getElementById('timearray');
-    let newHour = document.getElementById("orhrs").value;
-    let newIndex = document.getElementById('ordex').value;
-    timeArray[newIndex] = newHour;
-
-    let hrs = newHour;
-    dispTimeHrs = Math.floor(hrs);
-    dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
-    dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
-    timeArrayString[newIndex] = dispTimeStr;
-    e1.textContent = "";
-    for(i = 0; i <= count; i++){
-        e1.textContent += timeArrayString[i] + "    ";
+function overrideTime() {
+    if (oCount % 3 == 1) {
+        document.getElementById('orindex').style.display = "block";
+        document.getElementById('orhours').style.display = "block";
+        //document.getElementById('timearray').style.display = "none";
+        document.getElementById('orhelp').style.display = "block";
     }
-    
+    if (oCount % 3 == 0) {
+        document.getElementById('orindex').style.display = "none";
+        document.getElementById('orhours').style.display = "none";
+        //document.getElementById('timearray').style.display = "none";
+        document.getElementById('orhelp').style.display = "none";
+    }
+    if (oCount % 3 == 2) {
+        
+        let e1 = document.getElementById('timearray');
+        let newHour = document.getElementById("orhrs").value;
+        let newIndex = document.getElementById('ordex').value;
+        timeArray[newIndex] = newHour;
+        let hrs = newHour;
+        console.log(typeof (hrs));
+        dispTimeHrs = Math.floor(hrs);
+        dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
+        dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
+        timeArrayString[newIndex] = dispTimeStr;
+        let editedLine = 0;
+        newIndex = parseFloat(newIndex);
+        if ((newIndex + 1) % 0 == 0) {
+            editedLine = newIndex / 2;
+        }
+        else {
+            editedLine = (newIndex + 1) / 2;
+        }
+        e1.textContent = "LINE " + editedLine + " HAS BEEN EDITED";
+
+        //for(i = 0; i <= count; i++){
+        //    e1.textContent += timeArrayString[i] + "    ";
+        //}
+    }
+
+    oCount++;
 
 }
 
@@ -127,7 +159,7 @@ function summarizeDay(){
     pctWork = getPercent(totalHrs);
     totalHrs = totalHrs.toFixed(2);
 
-    e1.textContent = "Summary: " + (totalMin/60).toFixed(5) + " hours" + " " + "Edited: " + totalHrs + " hours Percent: " + pctWork;
+    e1.textContent = "Summary: " + (totalMin / 60).toFixed(2) + " hours" + " Percent: " + pctWork;
     totalHrs = 0;
 
 }
@@ -144,7 +176,6 @@ function getHrs(){
         totalHrs += timeArray[i] - timeArray[i-1];
         i = i - 2;
     }
-    console.log(totalHrs);
     return totalHrs;
 }
 
@@ -166,6 +197,14 @@ function createTimeString(h, m){
     }
 }
 
+function hideElements(){
+    document.getElementById('orbutton').style.backgroundColor = "red";
+    document.getElementById('orindex').style.display = "none";
+    document.getElementById('orhours').style.display = "none";
+   // document.getElementById('timearray').style.display = "none";
+    document.getElementById('orhelp').style.display = "none";
+}
+
     </script>
     <style>
 
@@ -173,38 +212,38 @@ function createTimeString(h, m){
     </style>
 </head>
 
-<body onload="showTime()">
+<body onload="showTime(); hideElements();">
     <h1 id="clock"></h1>
-    <div id="note">Click Enter to Start</div>
-    <div id="xx"></div>
-    <div id="xxx"></div>
 
     <button onclick="displayTimeAndComment()">Enter</button>
     <button onclick="clearText()">Clear</button>
-  <!--  <button onclick="endTime()">End</button>-->
-    <button onclick="summarizeDay()">Summarize</button>
-
-
-    <form id="textfield">
-            <input type ="text" id="text" value="" />
+    <!--<button onclick="endTime()">End</button>-->
+    <!--<button onclick="summarizeDay()">Summarize</button>-->
+    <button id="orbutton" onclick="overrideTime()">Override</button>
+    <form id="textfield" autocomplete="off">
+        <input type="text" id="text" value="" />
     </form>
+    <div id=summary>Summary: </div><br />
+    <div id="note"></div>
+    <div id="xx"></div>
+    <div id="xxx"></div>
+
+
     <div id="timearray">[ ]</div>
-    <div>Index, Value</div>
+    <div id="orhelp">Index, Value</div>
     <div style="display: flex;">
-            <form id="orindex">
-                    <input type = "number" id="ordex" value="" />
-            </form>
-            <form id="orhours">
-                    <input type ="number" id="orhrs" value="" />
-                </form>
-           </div>
-    
-
-    <button onclick="overrideTime()">Override</button>
-    <div id=summary>Summary: </div>
+        <form id="orindex">
+            <input type="number" id="ordex" value="" />
+        </form>
+        <form id="orhours">
+            <input type="number" id="orhrs" value="" />
+        </form>
+    </div>
 
 
-    
+
+
+
 </body>
 
 </html>
