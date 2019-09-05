@@ -2,21 +2,41 @@
 
 <head>
     <script>
+        
+let t = setInterval(showTime, 500)
 
 function showTime() {
-  let today = new Date();
-  let h = today.getHours();
-  let m = today.getMinutes();
-  let s = today.getSeconds();
-  m = checkTime(m);
-  s = checkTime(s);
-  document.getElementById('clock').innerHTML =
-  h + ":" + m + ":" + s;
-  let t = setTimeout(showTime, 500);
+    console.log('hi');
+    let today = new Date();
+    let h = today.getHours();
+    let m = today.getMinutes();
+    let s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    if (sCount % 2 == 1) {
+        document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
+    }
+    if (sCount % 2 == 0) {
+        clearInterval(t);
+        t = setInterval(showTime, 15000);
+        document.getElementById('clock').innerHTML = h + ":" + m;
+    }
 }
 function checkTime(i) {
-  if (i < 10) {i = "0" + i};
-  return i;
+    if (i < 10) {i = "0" + i};
+    return i;
+}
+
+function toggleSeconds() {
+    sCount++;
+    if (sCount % 2 == 0) {
+        clearInterval(t);
+        t = setInterval(showTime, 100);
+    }
+    else {
+        clearInterval(t);
+        t = setInterval(showTime, 500);
+    }
 }
 
 let startMin = 0,
@@ -26,6 +46,7 @@ let startMin = 0,
     count = -1,
     dispCount = 1,
     oCount = 1,
+    sCount = 1,
     timeArray = [],
     timeArrayString = [],
     dispTimeMins = 0,
@@ -39,7 +60,6 @@ function displayTimeAndComment(){
     }
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
-    //let e2 = document.getElementById('timearray');
     if(count < 0){
         e1.textContent = "";
     }
@@ -59,11 +79,6 @@ function displayTimeAndComment(){
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[count] = dispTimeStr;
 
-    //e2.textContent = "";
-    //for(i = 0; i <= count; i++){
-    //    e2.textContent += timeArrayString[i] + "    ";
-    //}
-
     if (count % 2 == 0) {
         e1.innerHTML += dispCount + " : ";
         dispCount++;
@@ -77,11 +92,8 @@ function displayTimeAndComment(){
     else{
         endMin = mins;
         let sectionMins = endMin - startMin;
-        //jzjz
-        e1.innerHTML += note + " for: ";
-        e1.innerHTML += " " + sectionMins + " mins <br />"
-
-        totalMin = totalMin + endMin - startMin;
+        e1.innerHTML += note + " for: " +  " " + sectionMins + " mins <br />" ;
+        totalMin = totalMin + sectionMins;
     }
     
 }
@@ -89,18 +101,16 @@ function overrideTime() {
     if (oCount % 3 == 1) {
         document.getElementById('orindex').style.display = "block";
         document.getElementById('orhours').style.display = "block";
-        //document.getElementById('timearray').style.display = "none";
         document.getElementById('orhelp').style.display = "block";
     }
     if (oCount % 3 == 0) {
         document.getElementById('orindex').style.display = "none";
         document.getElementById('orhours').style.display = "none";
-        //document.getElementById('timearray').style.display = "none";
         document.getElementById('orhelp').style.display = "none";
     }
     if (oCount % 3 == 2) {
         
-        let e1 = document.getElementById('timearray');
+        let e2 = document.getElementById('editinfo');
         let newHour = document.getElementById("orhrs").value;
         let newIndex = document.getElementById('ordex').value;
         timeArray[newIndex] = newHour;
@@ -112,17 +122,13 @@ function overrideTime() {
         timeArrayString[newIndex] = dispTimeStr;
         let editedLine = 0;
         newIndex = parseFloat(newIndex);
-        if ((newIndex + 1) % 0 == 0) {
-            editedLine = newIndex / 2;
+        if (newIndex % 2 == 0) {
+            editedLine = (newIndex + 2) / 2;
         }
         else {
             editedLine = (newIndex + 1) / 2;
         }
-        e1.textContent = "LINE " + editedLine + " HAS BEEN EDITED";
-
-        //for(i = 0; i <= count; i++){
-        //    e1.textContent += timeArrayString[i] + "    ";
-        //}
+        e2.textContent = "LINE " + editedLine + " HAS BEEN EDITED";
     }
 
     oCount++;
@@ -133,11 +139,12 @@ function overrideTime() {
 function clearText(){
     totalHrs = getHrs();
     let e1 = document.getElementById('note');
-    let e2 = document.getElementById('xx');
-    let e3 = document.getElementById('timearray')
+    let e2 = document.getElementById('editinfo')
+    let e4 = document.getElementById('xx');
     e1.textContent = totalMin + " minutes" + " " + "Edited: " + totalHrs + " hours";
-    e2.textContent = "";
-    e3.textContent = "[ ]";
+    e2.textContent = "[ ]";
+    e3.textContent = "";
+    
     startMin = 0;
     endMin = 0;
     totalMin = 0;
@@ -154,12 +161,12 @@ function clearText(){
 
 
 function summarizeDay(){
-    let e1 = document.getElementById('summary');
+    let e3 = document.getElementById('summary');
     totalHrs = getHrs()
     pctWork = getPercent(totalHrs);
     totalHrs = totalHrs.toFixed(2);
 
-    e1.textContent = "Summary: " + (totalMin / 60).toFixed(2) + " hours" + " Percent: " + pctWork;
+    e3.textContent = "Summary: " + (totalMin / 60).toFixed(2) + " hours" + " Percent: " + pctWork;
     totalHrs = 0;
 
 }
@@ -201,7 +208,6 @@ function hideElements(){
     document.getElementById('orbutton').style.backgroundColor = "red";
     document.getElementById('orindex').style.display = "none";
     document.getElementById('orhours').style.display = "none";
-   // document.getElementById('timearray').style.display = "none";
     document.getElementById('orhelp').style.display = "none";
 }
 
@@ -213,12 +219,11 @@ function hideElements(){
 </head>
 
 <body onload="showTime(); hideElements();">
+    <button id="secbutton" onclick="toggleSeconds()">Seconds</button>
     <h1 id="clock"></h1>
 
     <button onclick="displayTimeAndComment()">Enter</button>
     <button onclick="clearText()">Clear</button>
-    <!--<button onclick="endTime()">End</button>-->
-    <!--<button onclick="summarizeDay()">Summarize</button>-->
     <button id="orbutton" onclick="overrideTime()">Override</button>
     <form id="textfield" autocomplete="off">
         <input type="text" id="text" value="" />
@@ -229,7 +234,7 @@ function hideElements(){
     <div id="xxx"></div>
 
 
-    <div id="timearray">[ ]</div>
+    <div id="editinfo">++</div>
     <div id="orhelp">Index, Value</div>
     <div style="display: flex;">
         <form id="orindex">
