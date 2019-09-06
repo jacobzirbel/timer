@@ -55,9 +55,6 @@ let startMin = 0,
     pctWork = 0;
 
 function displayTimeAndComment(){
-    if(count >= 0){
-        summarizeDay();
-    }
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
     if(count < 0){
@@ -72,12 +69,16 @@ function displayTimeAndComment(){
         m = d.getMinutes(),
         hrs = (h + (m/60)),
         mins = h*60 + m;
-
+        
     timeArray[count] = hrs;
     dispTimeHrs = Math.floor(hrs);
     dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
     dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
     timeArrayString[count] = dispTimeStr;
+
+    if(count>=0){
+        summarizeDay();
+    }
 
     if (count % 2 == 0) {
         e1.innerHTML += dispCount + " : ";
@@ -195,15 +196,14 @@ function summarizeDay(){
 
 function getHrs(){
     total = 0;
-    let i = timeArray.length - 1;
-
-    while(i>-1){
-        if(i%2 === 0){
-            i = i - 1;
+    let i = timeArray.length;
+        while(i>1){
+            if(!isEven(i)){
+                i = i - 1;
+            }
+            total += timeArray[i-1] - timeArray[i-2];
+            i = i - 2;
         }
-        total += timeArray[i] - timeArray[i-1];
-        i = i - 2;
-    }
     return total;
 }
 
@@ -211,8 +211,10 @@ function getPercent(tw){
 
     let i = timeArray.length - 1;
     let pct = 0;
-   
     pct = ((tw)/(timeArray[i]-timeArray[0]))*100
+    if(tw == 0){
+        return 0;
+    }
     return pct;
 }
 
