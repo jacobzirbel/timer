@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <script>
         
@@ -12,13 +11,11 @@ function showTime() {
     let s = today.getSeconds();
     m = checkTime(m);
     s = checkTime(s);
-    if (sCount % 2 == 1) {
-        document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
-    }
-    if (sCount % 2 == 0) {
-        clearInterval(t);
-        t = setInterval(showTime, 15000);
+    if (isEven(sCount)) {
         document.getElementById('clock').innerHTML = h + ":" + m;
+    }
+    else{
+        document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
     }
 }
 function checkTime(i) {
@@ -28,22 +25,13 @@ function checkTime(i) {
 
 function toggleSeconds() {
     sCount++;
-    if (sCount % 2 == 0) {
-        clearInterval(t);
-        t = setInterval(showTime, 100);
-    }
-    else {
-        clearInterval(t);
-        t = setInterval(showTime, 500);
-    }
 }
 
 let startMin = 0,
     endMin = 0,
     totalMin = 0,
     totalHrs = 0,
-    count = -1,
-    dispCount = 1,
+    count = 0,
     oCount = 1,
     sCount = 1,
     timeArray = [],
@@ -55,38 +43,21 @@ let startMin = 0,
     pctWork = 0;
 
 function displayTimeAndComment(){
-    let note = document.getElementById("text").value;
-    let e1 =  document.getElementById('note');
-    if(count < 0){
-        e1.textContent = "";
-    }
-    if (note == "") {
-        note = "stuff";
-    }
-    count++;
     let d = new Date();
         h = d.getHours(),
         m = d.getMinutes(),
         hrs = (h + (m/60)),
         mins = h*60 + m;
-        
+    let note = document.getElementById("text").value;
+    let e1 =  document.getElementById('note');
+    if (note == "") {
+        note = "stuff";
+    }
+    
     timeArray[count] = hrs;
-    dispTimeHrs = Math.floor(hrs);
-    dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
-    dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
+    dispTimeStr = createTimeString(hrs);
     timeArrayString[count] = dispTimeStr;
 
-    if(count>=0){
-        summarizeDay();
-    }
-
-    if (count % 2 == 0) {
-        e1.innerHTML += dispCount + " : ";
-        dispCount++;
-    }
-
-    e1.innerHTML += timeArrayString[count] + " ";
-   
     if(isEven(count)){
         noteArray[count] = note;
         startMin = mins;
@@ -94,11 +65,14 @@ function displayTimeAndComment(){
     else{
         endMin = mins;
         let sectionMins = endMin - startMin;
+        noteArray[count-1] = note;
         noteArray[count] = sectionMins;
-        e1.innerHTML += noteArray[count-1] + " for: " +  " " + noteArray[count] + " mins <br />" ;
         totalMin = totalMin + sectionMins;
     }
 
+    printNotes();
+    count++;
+    summarizeDay();
 }
 
 function printNotes(){
@@ -106,19 +80,34 @@ function printNotes(){
     let totalLines = Math.ceil(timeArray.length/2)
     let e1 =  document.getElementById('note');
     e1.innerHTML = "";
-    for(line=1; line <= totalLines; line++){
-        //interpolation?
-        e1.innerHTML +=  line + ' : ' + timeArrayString[line*2-2] + " " + timeArrayString[line*2-1] + " " + noteArray[line*2-2] + ' for: ' + noteArray[line*2-1] + ' mins';
-        e1.innerHTML += "<br />";
+    for(line=1; line < totalLines; line++){
+        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${noteArray[line*2-1]} mins <br />`;
     }
+    if(timeArrayString[line*2-1] == undefined){
+        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} -`
+    }
+    else{
+        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${noteArray[line*2-1]} mins <br />`;
+        document.getElementById("textfield").reset();
+    }
+
 }
 
 function overrideTime() {
-    //need error message for time that doesn't make sense
     if (isEven(oCount)) {
         let e2 = document.getElementById('editinfo');
         let newHour = parseFloat(document.getElementById("orhrs").value);
         let newIndex = parseInt(document.getElementById('ordex').value);
+
+        if(Number.isNaN(newIndex) || Number.isNaN(newHour) || timeArray[newIndex - 1] > newHour || timeArray[newIndex + 1] < newHour){
+            alert('oops');
+            document.getElementById('orindex').style.display = "none";
+            document.getElementById('orhours').style.display = "none";
+            document.getElementById('orhelp').style.display = "none";
+            oCount++;
+            return;
+        }
+
         timeArray[newIndex] = newHour;
         let hrs = newHour;
         dispTimeHrs = Math.floor(hrs);
@@ -134,15 +123,16 @@ function overrideTime() {
             let newSectionMins = (timeArray[newIndex]-timeArray[newIndex-1]) * 60;
             noteArray[newIndex] = newSectionMins;
         }
-
         let editedLine = 0;
-        if (isEven(newIndex)) {
+
+        if(isEven(newIndex)){
             editedLine = (newIndex + 2) / 2;
         }
         else {
             editedLine = (newIndex + 1) / 2;
         }
-        e2.innerHTML += "LINE " + editedLine + " HAS BEEN EDITED" + "<br />";
+        
+            e2.innerHTML += "LINE " + editedLine + " HAS BEEN EDITED" + "<br />";
 
         printNotes();
         summarizeDay();
@@ -161,24 +151,26 @@ function overrideTime() {
 
 }
 
-function clearText(){
-    //fix this
+function resetEverything(){
     totalHrs = getHrs();
+    alert(totalHrs.toFixed(2));
     let e1 = document.getElementById('note');
     let e2 = document.getElementById('editinfo')
+    let e3 = document.getElementById('summary')
     let e4 = document.getElementById('xx');
-    e1.textContent = totalMin + " minutes" + " " + "Edited: " + totalHrs + " hours";
-    e2.textContent = "[ ]";
-    e3.textContent = "";
-    
-    startMin = 0;
-    endMin = 0;
-    totalMin = 0;
-    totalHrs = 0;
-    count = -1;
-    timeArray = [];
-    timeArrayString = [];
-    noteArray = [];
+    e1.innerHTML = "";
+    e2.innerHTML = "";
+    e3.innerHTML = "";
+    e4.innerHTML = "";
+    startMin = 0,
+    endMin = 0,
+    totalMin = 0,
+    totalHrs = 0,
+    count = 0,
+    oCount = 1,
+    timeArray = [],
+    timeArrayString = [],
+    noteArray = [],
     dispTimeMins = 0,
     dispTimeHrs = 0,
     dispTimeStr = "",
@@ -218,19 +210,21 @@ function getPercent(tw){
     return pct;
 }
 
-function createTimeString(h, m){
-    if (m < 10){
-        return h + ":" + "0" + m;
+function createTimeString(h){
+    dh = Math.floor(h);
+    dm = Math.round((h - dh) * 60);
+    if (dm < 10){
+        return dh + ":" + "0" + dm;
     }
     else{
-        return h + ":" + m;
+        return dh + ":" + dm;
     }
 }
 
 
 
 function hideElements(){
-    document.getElementById('orbutton').style.backgroundColor = "red";
+   // document.getElementById('orbutton').style.backgroundColor = "red";
     document.getElementById('orindex').style.display = "none";
     document.getElementById('orhours').style.display = "none";
     document.getElementById('orhelp').style.display = "none";
@@ -247,35 +241,47 @@ function isEven(value){
 
     </script>
     <style>
-
+        #note{
+            margin: 5px;
+        }
+        #orbutton{
+            background-color: red;
+        }
+        .dex{
+            width: 50px;
+            margin: 2px;
+        }
 
     </style>
+
+    <!-- <meta name="viewport" content= "width=device-width, initial-scale=1.0">  -->
+
 </head>
 
 <body onload="showTime(); hideElements();">
     <button id="secbutton" onclick="toggleSeconds()">Seconds</button>
-    <h1 id="clock"></h1>
+    <h1 class="text" id="clock"></h1>
 
     <button onclick="displayTimeAndComment()">Enter</button>
-    <button onclick="clearText()">Clear</button>
+    <button onclick="resetEverything()">Clear</button>
     <button id="orbutton" onclick="overrideTime()">Override</button>
     <form id="textfield" autocomplete="off">
         <input type="text" id="text" value="" />
     </form>
-    <div id=summary>Summary: </div><br />
-    <div id="note"></div>
-    <div id="xx"></div>
-    <div id="xxx"></div>
+    <div class="text" id=summary>Summary: </div>
+    <div class="text" id="note"></div>
+    <div class="text" id="xx"></div>
+    <div class="text" id="xxx"></div>
 
 
     <div id="editinfo"></div>
-    <div id="orhelp">Index, Value</div>
+    <div class="text" id="orhelp">Index , Value</div>
     <div style="display: flex;">
         <form id="orindex">
-            <input type="number" id="ordex" value="" />
+            <input class='dex' type="number" id="ordex" value="" />
         </form>
         <form id="orhours">
-            <input type="number" id="orhrs" value="" />
+            <input class='dex' type="number" id="orhrs" value="" />
         </form>
     </div>
 
