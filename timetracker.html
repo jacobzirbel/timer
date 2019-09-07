@@ -81,13 +81,13 @@ function printNotes(){
     let e1 =  document.getElementById('note');
     e1.innerHTML = "";
     for(line=1; line < totalLines; line++){
-        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${noteArray[line*2-1]} mins <br />`;
+        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${Math.round(noteArray[line*2-1])} mins <br />`;
     }
     if(timeArrayString[line*2-1] == undefined){
         e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} -`
     }
     else{
-        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${noteArray[line*2-1]} mins <br />`;
+        e1.innerHTML += `${line}: ${timeArrayString[line*2-2]} - ${timeArrayString[line*2-1]} ${noteArray[line*2-2]} for ${Math.round(noteArray[line*2-1])} mins <br />`;
         document.getElementById("textfield").reset();
     }
 
@@ -96,10 +96,13 @@ function printNotes(){
 function overrideTime() {
     if (isEven(oCount)) {
         let e2 = document.getElementById('editinfo');
-        let newHour = parseFloat(document.getElementById("orhrs").value);
+        let newHour = timeToHours(parseFloat(document.getElementById("orhrs").value).toFixed(2));
         let newIndex = parseInt(document.getElementById('ordex').value);
 
-        if(Number.isNaN(newIndex) || Number.isNaN(newHour) || timeArray[newIndex - 1] > newHour || timeArray[newIndex + 1] < newHour){
+        if(Number.isNaN(newIndex) || Number.isNaN(newHour) || 
+            timeArray[newIndex - 1] > newHour || timeArray[newIndex + 1] < newHour ||
+            newIndex >= (timeArray.length - 2) || newHour == Infinity
+            ){
             alert('oops');
             document.getElementById('orindex').style.display = "none";
             document.getElementById('orhours').style.display = "none";
@@ -110,9 +113,8 @@ function overrideTime() {
 
         timeArray[newIndex] = newHour;
         let hrs = newHour;
-        dispTimeHrs = Math.floor(hrs);
-        dispTimeMins = Math.round((hrs - dispTimeHrs) * 60);
-        dispTimeStr = createTimeString(dispTimeHrs, dispTimeMins);
+
+        dispTimeStr = createTimeString(hrs);
         timeArrayString[newIndex] = dispTimeStr;
 
         if(isEven(newIndex)){
@@ -131,8 +133,8 @@ function overrideTime() {
         else {
             editedLine = (newIndex + 1) / 2;
         }
-        
-            e2.innerHTML += "LINE " + editedLine + " HAS BEEN EDITED" + "<br />";
+
+        e2.innerHTML += "LINE " + editedLine + " HAS BEEN EDITED" + "<br />";
 
         printNotes();
         summarizeDay();
@@ -200,7 +202,6 @@ function getHrs(){
 }
 
 function getPercent(tw){
-
     let i = timeArray.length - 1;
     let pct = 0;
     pct = ((tw)/(timeArray[i]-timeArray[0]))*100
@@ -221,7 +222,16 @@ function createTimeString(h){
     }
 }
 
-
+function timeToHours(time){
+    let h = Math.floor(time);
+    let m = (time - h) * (5 / 3);
+    console.log(h+ m);
+    let hrs = h + m
+    if(m > 59){
+        return Infinity;
+    }
+    return hrs;
+}
 
 function hideElements(){
    // document.getElementById('orbutton').style.backgroundColor = "red";
@@ -237,8 +247,6 @@ function isEven(value){
         return false; 
 }
 
-
-
     </script>
     <style>
         #note{
@@ -248,7 +256,7 @@ function isEven(value){
             background-color: red;
         }
         .dex{
-            width: 50px;
+            width: 150px;
             margin: 2px;
         }
 
