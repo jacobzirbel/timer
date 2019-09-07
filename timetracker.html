@@ -13,9 +13,11 @@ function showTime() {
     s = checkTime(s);
     if (isEven(sCount)) {
         document.getElementById('clock').innerHTML = h + ":" + m;
+        document.getElementById('secbutton').textContent = "Show Seconds";
     }
     else{
         document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
+        document.getElementById('secbutton').textContent = "Hide Seconds";
     }
 }
 function checkTime(i) {
@@ -43,11 +45,11 @@ let startMin = 0,
     pctWork = 0;
 
 function displayTimeAndComment(){
-    let d = new Date();
-        h = d.getHours(),
-        m = d.getMinutes(),
-        hrs = (h + (m/60)),
-        mins = h*60 + m;
+    d = new Date();
+    h = d.getHours(),
+    m = d.getMinutes(),
+    hrs = (h + (m/60)),
+    mins = h*60 + m;
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
     if (note == "") {
@@ -98,12 +100,9 @@ function overrideTime() {
         let e2 = document.getElementById('editinfo');
         let newHour = timeToHours(parseFloat(document.getElementById("orhrs").value).toFixed(2));
         let newIndex = parseInt(document.getElementById('ordex').value);
+        let noError = findOverrideError(newIndex, newHour);
 
-        if(Number.isNaN(newIndex) || Number.isNaN(newHour) || 
-            timeArray[newIndex - 1] > newHour || timeArray[newIndex + 1] < newHour ||
-            newIndex >= (timeArray.length - 2) || newHour == Infinity
-            ){
-            alert('oops');
+        if(!noError){
             document.getElementById('orindex').style.display = "none";
             document.getElementById('orhours').style.display = "none";
             document.getElementById('orhelp').style.display = "none";
@@ -134,7 +133,7 @@ function overrideTime() {
             editedLine = (newIndex + 1) / 2;
         }
 
-        e2.innerHTML += "LINE " + editedLine + " HAS BEEN EDITED" + "<br />";
+        e2.innerHTML += `LINE ${editedLine} HAS BEEN EDITED <br />`
 
         printNotes();
         summarizeDay();
@@ -151,6 +150,33 @@ function overrideTime() {
 
     oCount++;
 
+}
+
+function findOverrideError(newIndex, newHour){
+    let d = new Date();
+    console.log(d.getHours(),(d.getMinutes()/60) ,(d.getHours() + (d.getMinutes()/60)));
+    if(Number.isNaN(newIndex) || Number.isNaN(newHour)){
+        alert('missing something');
+    }
+    else if(timeArray[newIndex].toFixed(2) == newHour.toFixed(2)){
+        alert('not an edit')
+    }
+    else if(newHour == Infinity){
+        alert('not a time');
+    }
+    else if(newHour.toFixed(2) > (d.getHours() + (d.getMinutes()/60)).toFixed(2)){
+        alert('thats the future')
+    }
+    else if(timeArray[newIndex - 1] > newHour || timeArray[newIndex + 1] < newHour){
+        alert('out of bounds');
+    }
+    else if(newIndex >= (timeArray.length)){
+        alert("doesn't exist");
+    }
+    else{
+        return true;
+    } 
+        return false;
 }
 
 function resetEverything(){
@@ -225,7 +251,6 @@ function createTimeString(h){
 function timeToHours(time){
     let h = Math.floor(time);
     let m = (time - h) * (5 / 3);
-    console.log(h+ m);
     let hrs = h + m
     if(m > 59){
         return Infinity;
@@ -234,7 +259,6 @@ function timeToHours(time){
 }
 
 function hideElements(){
-   // document.getElementById('orbutton').style.backgroundColor = "red";
     document.getElementById('orindex').style.display = "none";
     document.getElementById('orhours').style.display = "none";
     document.getElementById('orhelp').style.display = "none";
@@ -267,7 +291,7 @@ function isEven(value){
 </head>
 
 <body onload="showTime(); hideElements();">
-    <button id="secbutton" onclick="toggleSeconds()">Seconds</button>
+    <button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
     <h1 class="text" id="clock"></h1>
 
     <button onclick="displayTimeAndComment()">Enter</button>
