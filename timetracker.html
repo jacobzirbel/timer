@@ -31,11 +31,11 @@ function showTime() {
     m = checkTime(m);
     s = checkTime(s);
     if (isEven(sCount)) {
-        document.getElementById('clock').innerHTML = h + ":" + m;
+        document.getElementById('clock').innerHTML = `${h}:${m}`;
         document.getElementById('secbutton').textContent = "Show Seconds";
     }
     else{
-        document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
+        document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
         document.getElementById('secbutton').textContent = "Hide Seconds";
     }
 }
@@ -45,7 +45,7 @@ function checkTime(i) {
 }
 
 function toggleSeconds() {
-        sCount++;
+    sCount++;
 }
 
 function handleMidnight(){
@@ -54,6 +54,7 @@ function handleMidnight(){
         displayTimeAndComment();
         displayTimeAndComment();
     }
+    midnightCount++;
     return;
 }
 
@@ -63,7 +64,6 @@ function displayTimeAndComment(){
     m = d.getMinutes();
     hrs = (h + (m/60));
     mins = h*60 + m;
-    if(hrs !== mins/60){alert('problem');}
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
     if (note == "") {
@@ -71,6 +71,9 @@ function displayTimeAndComment(){
     }
     
     timeArray[count] = hrs;
+    if(timeArray[count]==0 && !isEven(count) && midnightCount == 1){
+        timeArray[count] = 24;
+    }
     dispTimeStr = createTimeString(hrs);
     timeArrayString[count] = dispTimeStr;
 
@@ -80,6 +83,7 @@ function displayTimeAndComment(){
     }
     else{
         endMin = mins;
+        if(endMin == 0 && midnightCount == 1){endMin = 24 * 60;}
         let sectionMins = endMin - startMin;
         noteArray[count-1] = note;
         noteArray[count] = sectionMins;
@@ -87,8 +91,8 @@ function displayTimeAndComment(){
     }
 
     printNotes();
-    count++;
     summarizeDay();
+    count++;
 }
 
 function printNotes(){
@@ -111,7 +115,6 @@ function printNotes(){
 
 function overrideTime() {
     if (isEven(oCount)) {
-        debugger;
         let e2 = document.getElementById('editinfo');
         let newHour = timeToHours(parseFloat(document.getElementById("orhrs").value).toFixed(2));
         let newIndex = parseInt(document.getElementById('ordex').value);
@@ -225,7 +228,8 @@ function summarizeDay(){
     let e3 = document.getElementById('summary');
     totalHrs = getHrs();
     pctWork = getPercent(totalHrs).toFixed(2);
-    e3.textContent = "Summary: " + (totalHrs).toFixed(2) + " hours" + " Percent: " + pctWork;
+
+    e3.textContent = `Summary: ${(totalHrs).toFixed(2)} hours Percent: ${pctWork}%`;
     totalHrs = 0;
 
 }
@@ -244,15 +248,16 @@ function getHrs(){
 }
 
 function getPercent(tw){
-    if(midnightCount > 0){
-        tw = 24 + tw;
-    }
+    if(tw == 0){return 0;}
     let i = timeArray.length - 1;
     let pct = 0;
-    pct = ((tw)/(timeArray[i]-timeArray[0]))*100
-    if(tw == 0){
-        return 0;
+    if(midnightCount == 0){
+        pct = ((tw)/(timeArray[i]-timeArray[0]))*100;
     }
+    else{
+        pct = ((tw)/((timeArray[i]+24)-timeArray[0]))*100;
+    }
+   // if(pct < 0){return 0;}
     return pct;
 }
 
