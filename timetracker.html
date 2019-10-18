@@ -25,11 +25,22 @@ function showTime() {
     let h = today.getHours();
     let m = today.getMinutes();
     let s = today.getSeconds();
+    let currentHrs = h + (m/60);
     if (h == 0 && m == 0 && midnightCount == 0){
         handleMidnight();
     }
     m = checkTime(m);
     s = checkTime(s);
+    //stupid/////////
+    if(m % 5 == 0){
+        if(isEven(timeArray.length)){
+            document.getElementById('runningtime').innerHTML = getHrs().toFixed(2);
+        }
+        else{
+            document.getElementById('runningtime').innerHTML = (getHrs()+(currentHrs-timeArray[timeArray.length-1])).toFixed(2);
+        }
+    }
+    /////////////////
     if (isEven(sCount)) {
         document.getElementById('clock').innerHTML = `${h}:${m}`;
         document.getElementById('secbutton').textContent = "Show Seconds";
@@ -115,7 +126,6 @@ function printNotes(){
 
 function overrideTime() {
     if (isEven(oCount)) {
-        let e2 = document.getElementById('editinfo');
         let newHour = timeToHours(parseFloat(document.getElementById("orhrs").value).toFixed(2));
         let newIndex = parseInt(document.getElementById('ordex').value);
         let noError = findOverrideError(newIndex, newHour);
@@ -312,7 +322,9 @@ function isEven(value){
 
 <body onload="showTime(); hideElements();">
     <button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
+    <div class="text" id="runningtime"></div>
     <h1 class="text" id="clock"></h1>
+    
 
     <button onclick="displayTimeAndComment()">Enter</button>
     <button onclick="resetEverything()">Clear</button>
