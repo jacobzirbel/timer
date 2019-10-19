@@ -31,16 +31,7 @@ function showTime() {
     }
     m = checkTime(m);
     s = checkTime(s);
-    //stupid/////////
-    if(m % 5 == 0){
-        if(isEven(timeArray.length)){
-            document.getElementById('runningtime').innerHTML = getHrs().toFixed(2);
-        }
-        else{
-            document.getElementById('runningtime').innerHTML = (getHrs()+(currentHrs-timeArray[timeArray.length-1])).toFixed(2);
-        }
-    }
-    /////////////////
+    if(m%15==0){updateRunning()};
     if (isEven(sCount)) {
         document.getElementById('clock').innerHTML = `${h}:${m}`;
         document.getElementById('secbutton').textContent = "Show Seconds";
@@ -75,6 +66,7 @@ function displayTimeAndComment(){
     m = d.getMinutes();
     hrs = (h + (m/60));
     mins = h*60 + m;
+    updateRunning();
     let note = document.getElementById("text").value;
     let e1 =  document.getElementById('note');
     if (note == "") {
@@ -242,6 +234,20 @@ function summarizeDay(){
     e3.textContent = `Summary: ${(totalHrs).toFixed(2)} hours Percent: ${pctWork}%`;
     totalHrs = 0;
 
+}
+
+function updateRunning(){
+    let today = new Date();
+    let h = today.getHours();
+    let m = today.getMinutes();
+    let s = today.getSeconds();
+    let currentHrs = h + (m/60) + (s/3600);
+        if(isEven(timeArray.length)){
+            document.getElementById('runningtime').innerHTML = getHrs().toFixed(2);
+        }
+        else{
+            document.getElementById('runningtime').innerHTML = (getHrs()+(currentHrs-timeArray[timeArray.length-1])).toFixed(2);
+        }
 }
 
 function getHrs(){
