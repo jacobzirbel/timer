@@ -2,22 +2,23 @@
 <head>
     <script>
 
-let startMin = 0,
-    endMin = 0,
-    totalMin = 0,
-    totalHrs = 0,
-    count = 0,
-    oCount = 1,
-    sCount = 1,
-    midnightCount = 0,
-    timeArray = [],
-    timeArrayString = [],
-    noteArray = [],
-    dispTimeMins = 0,
-    dispTimeHrs = 0,
-    dispTimeStr = "",
-    pctWork = 0;
         
+let startHrs = 0,
+endHrs = 0,
+totalMin = 0,
+totalHrs = 0,
+count = 0,
+oCount = 1,
+sCount = 1,
+midnightCount = 0,
+timeArray = [],
+timeArrayString = [],
+noteArray = [],
+dispTimeMins = 0,
+dispTimeHrs = 0,
+dispTimeStr = "",
+pctWork = 0;
+    
 let t = setInterval(showTime, 1000)
 
 function showTime() {
@@ -40,17 +41,17 @@ function showTime() {
         document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
         document.getElementById('secbutton').textContent = "Hide Seconds";
     }
-}
-function checkTime(i) {
+    }
+    function checkTime(i) {
     if (i < 10) {i = "0" + i};
     return i;
-}
+    }
 
-function toggleSeconds() {
+    function toggleSeconds() {
     sCount++;
-}
+    }
 
-function handleMidnight(){
+    function handleMidnight(){
     midnightCount++;
     if(!isEven(count)){
         displayTimeAndComment();
@@ -72,22 +73,21 @@ function displayTimeAndComment(){
     if (note == "") {
         note = "stuff";
     }
-    
+
     timeArray[count] = hrs;
     if(timeArray[count]==0 && !isEven(count) && midnightCount == 1){
         timeArray[count] = 24;
     }
     dispTimeStr = createTimeString(hrs);
     timeArrayString[count] = dispTimeStr;
-
     if(isEven(count)){
         noteArray[count] = note;
-        startMin = mins;
+        startHrs = mins/60;
     }
     else{
-        endMin = mins;
-        if(endMin == 0 && midnightCount == 1){endMin = 24 * 60;}
-        let sectionMins = endMin - startMin;
+        endHrs = mins/60;
+        if(endHrs == 0 && midnightCount == 1){endHrs = 24;}
+        let sectionMins = (endHrs - timeArray[count-1]) * 60;
         noteArray[count-1] = note;
         noteArray[count] = sectionMins;
         totalMin = totalMin + sectionMins;
@@ -117,6 +117,7 @@ function printNotes(){
 }
 
 function overrideTime() {
+    let e2 = document.getElementById('editinfo')
     if (isEven(oCount)) {
         let newHour = timeToHours(parseFloat(document.getElementById("orhrs").value).toFixed(2));
         let newIndex = parseInt(document.getElementById('ordex').value);
@@ -136,9 +137,12 @@ function overrideTime() {
         dispTimeStr = createTimeString(hrs);
         timeArrayString[newIndex] = dispTimeStr;
 
-        if(isEven(newIndex)){
+        if(isEven(newIndex) && timeArray.length !== newIndex){
             let newSectionMins = (timeArray[newIndex+1]-timeArray[newIndex]) * 60;
             noteArray[newIndex+1] = newSectionMins;
+        }
+        else if(isEven(newIndex) && timeArray.length === newIndex){
+            //just replace it and move on
         }
         else{
             let newSectionMins = (timeArray[newIndex]-timeArray[newIndex-1]) * 60;
@@ -153,8 +157,8 @@ function overrideTime() {
         else {
             editedLine = (newIndex + 1) / 2;
         }
-
-        e2.innerHTML += `LINE ${editedLine} HAS BEEN EDITED <br />`
+        timeArrayString[newIndex] += "*";
+        //e2.innerHTML += `LINE ${editedLine} HAS BEEN EDITED <br />`
 
         printNotes();
         summarizeDay();
@@ -178,7 +182,7 @@ function findOverrideError(newIndex, newHour){
     if(Number.isNaN(newIndex) || Number.isNaN(newHour)){
         alert('missing something');
     }
-    else if(newHour == Infinity){
+    else if(newHour === Infinity){
         alert('not a time');
     }
     else if(newHour.toFixed(2) > (d.getHours() + (d.getMinutes()/60)).toFixed(2)){
@@ -190,7 +194,7 @@ function findOverrideError(newIndex, newHour){
     else if(newIndex >= (timeArray.length)){
         alert("doesn't exist");
     }
-    else if(timeArray[newIndex].toFixed(2) == newHour.toFixed(2)){
+    else if(timeArray[newIndex].toFixed(2) === newHour.toFixed(2)){
         alert('not an edit')
     }
     else{
@@ -211,8 +215,8 @@ function resetEverything(){
     e2.innerHTML = "";
     e3.innerHTML = "";
     e4.innerHTML = "";
-    startMin = 0,
-    endMin = 0,
+    startHrs = 0,
+    endHrs = 0,
     totalMin = 0,
     totalHrs = 0,
     count = 0,
@@ -248,9 +252,9 @@ function updateRunning(){
         else{
             document.getElementById('runningtime').innerHTML = (getHrs()+(currentHrs-timeArray[timeArray.length-1])).toFixed(2);
         }
-}
+    }
 
-function getHrs(){
+    function getHrs(){
     total = 0;
     let i = timeArray.length;
         while(i>1){
@@ -273,7 +277,7 @@ function getPercent(tw){
     else{
         pct = ((tw)/((timeArray[i]+24)-timeArray[0]))*100;
     }
-   // if(pct < 0){return 0;}
+    // if(pct < 0){return 0;}
     return pct;
 }
 
@@ -307,6 +311,7 @@ function isEven(value){
         return false; 
 }
 
+
     </script>
     <style>
         #note{
@@ -316,7 +321,7 @@ function isEven(value){
             background-color: red;
         }
         .dex{
-            width: 30px;
+            width: 55px;
             margin: 2px;
         }
 
@@ -328,7 +333,7 @@ function isEven(value){
 
 <body onload="showTime(); hideElements();">
     <button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
-    <div class="text" id="runningtime"></div>
+    <div class="text" ></div><button id="runningtime" onclick="updateRunning()"></button>
     <h1 class="text" id="clock"></h1>
     
 
