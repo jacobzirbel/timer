@@ -1,1 +1,3 @@
 # timer
+
+First Javascript project
