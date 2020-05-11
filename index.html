@@ -1,5 +1,14 @@
 <html>
 	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Timer</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
 		<script src="script.js"></script>
 		<link rel="stylesheet" href="style.css" />
 
@@ -7,31 +16,33 @@
 	</head>
 
 	<body onload="showTime(); hideElements();">
-		<button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
-		<div class="text"></div>
-		<button id="runningtime" onclick="updateRunning()">0.00</button>
-		<h1 class="text" id="clock"></h1>
+		<div class="container">
+			<button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
+			<div class="text"></div>
+			<h1 class="text" id="clock"></h1>
 
-		<button onclick="displayTimeAndComment()">Enter</button>
-		<button onclick="resetEverything()">Clear</button>
-		<button id="orbutton" onclick="overrideTime()">Override</button>
-		<form id="textfield" autocomplete="off">
-			<input type="text" id="text" value="" />
-		</form>
-		<div class="text" id="summary">Summary:</div>
-		<div class="text" id="note"></div>
-		<div class="text" id="xx"></div>
-		<div class="text" id="xxx"></div>
+			<button onclick="displayTimeAndComment()">Enter</button>
+			<button onclick="resetEverything()">Clear</button>
+			<button id="orbutton" onclick="overrideTime()">Override</button>
+			<form id="textfield" autocomplete="off"></form>
+				<input type="text" id="text" value="" />
+			</form>
+			<div class="text" id="summary">Summary:</div>
+			<div class="text" id="note"></div>
+			<div class="text" id="xx"></div>
+			<div class="text" id="xxx"></div>
 
-		<div id="editinfo"></div>
-		<div class="text" id="orhelp">Index , Value</div>
-		<div style="display: flex;">
-			<form id="orindex">
-				<input class="dex" type="number" id="ordex" value="" />
-			</form>
-			<form id="orhours">
-				<input class="dex" type="number" id="orhrs" value="" />
-			</form>
+			<div id="editinfo"></div>
+			<div class="text" id="orhelp">Index , Value</div>
+			<div style="display: flex;">
+				<form id="orindex">
+					<input class="dex" type="number" id="ordex" value="" />
+				</form>
+				<form id="orhours">
+					<input class="dex" type="number" id="orhrs" value="" />
+				</form>
+			</div>
 		</div>
 	</body>
 </html>
+
