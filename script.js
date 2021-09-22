@@ -1,3 +1,6 @@
+alert("Hello! 😎")
+
+
 let startHrs = 0,
 	endHrs = 0,
 	totalMin = 0,
