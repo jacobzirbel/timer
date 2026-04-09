@@ -101,6 +101,11 @@ function displayTimeAndComment() {
 			totalsObj[k] = totalsObj[k].toFixed(2);
 		}
 		console.log(totalsObj);
+		let e4 = document.getElementById("xx");
+		e4.innerHTML = "By activity:<br />";
+		for (let k in totalsObj) {
+			e4.innerHTML += `&nbsp;&nbsp;${k}: ${totalsObj[k]} hrs<br />`;
+		}
 	}
 	printNotes();
 	summarizeDay();

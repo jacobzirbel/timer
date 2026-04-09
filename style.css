@@ -1,13 +1,67 @@
+#clock {
+	font-size: 5rem;
+	font-family: monospace;
+	letter-spacing: 4px;
+	margin: 0;
+}
+
 #note {
 	margin: 5px;
+	font-family: monospace;
+	font-size: 0.95rem;
+	line-height: 1.6;
 }
+
+#summary {
+	font-weight: bold;
+	font-size: 1.1rem;
+}
+
+#xx {
+	font-family: monospace;
+	font-size: 0.9rem;
+	color: #444;
+	line-height: 1.7;
+}
+
 #orbutton {
-	background-color: red;
+	background-color: #c0392b;
+	color: white;
+	border: none;
 }
+
+#secbutton {
+	float: right;
+	font-size: 0.75rem;
+	padding: 3px 8px;
+	background: #eee;
+	border: 1px solid #ccc;
+}
+
+button {
+	padding: 6px 14px;
+	margin: 3px 2px;
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+#text {
+	font-size: 1rem;
+	padding: 4px 8px;
+	width: 220px;
+	margin: 4px 0;
+}
+
 .dex {
 	width: 55px;
 	margin: 2px;
 }
+
 div {
 	margin: 10px auto;
+}
+
+#orhelp {
+	font-size: 0.85rem;
+	color: #666;
 }
