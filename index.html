@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Timer</title>
 		<link
 			rel="stylesheet"
@@ -21,9 +21,11 @@
 			<div class="text"></div>
 			<h1 class="text" id="clock"></h1>
 
-			<button onclick="displayTimeAndComment()">Enter</button>
-			<button onclick="resetEverything()">Clear</button>
-			<button id="orbutton" onclick="overrideTime()">Edit</button>
+			<div style="display:flex; gap:6px; justify-content:center;">
+				<button onclick="displayTimeAndComment()">Enter</button>
+				<button onclick="resetEverything()">Clear</button>
+				<button id="orbutton" onclick="overrideTime()">Edit</button>
+			</div>
 			<form id="textfield" autocomplete="off">
 				<input type="text" id="text" value="" />
 			</form>
