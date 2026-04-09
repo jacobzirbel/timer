@@ -149,6 +149,7 @@ function overrideTime() {
 			document.getElementById("orindex").style.display = "none";
 			document.getElementById("orhours").style.display = "none";
 			document.getElementById("orhelp").style.display = "none";
+			document.getElementById("orref").style.display = "none";
 			oCount++;
 			return;
 		}
@@ -185,10 +186,19 @@ function overrideTime() {
 		document.getElementById("orindex").style.display = "none";
 		document.getElementById("orhours").style.display = "none";
 		document.getElementById("orhelp").style.display = "none";
+		document.getElementById("orref").style.display = "none";
 	} else {
 		document.getElementById("orindex").style.display = "block";
 		document.getElementById("orhours").style.display = "block";
 		document.getElementById("orhelp").style.display = "block";
+		document.getElementById("orhelp").innerHTML = "index (click to select)&nbsp;&nbsp;&nbsp;new time (e.g. 14.30)";
+
+		let orref = document.getElementById("orref");
+		orref.innerHTML = "";
+		for (let i = 0; i < timeArrayString.length; i++) {
+			orref.innerHTML += `<span class="orrefitem" onclick="document.getElementById('ordex').value=${i}">${i}: ${timeArrayString[i]}</span>  `;
+		}
+		orref.style.display = "block";
 	}
 
 	oCount++;

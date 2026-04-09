@@ -15,7 +15,7 @@
 		<!-- <meta name="viewport" content= "width=device-width, initial-scale=1.0">  -->
 	</head>
 
-	<body onload="showTime(); hideElements();">
+	<body onload="showTime(); hideElements(); document.getElementById('orref').style.display='none';">
 		<div class="container d-flex flex-column align-items-center">
 			<button id="secbutton" onclick="toggleSeconds()">Hide Seconds</button>
 			<div class="text"></div>
@@ -23,7 +23,7 @@
 
 			<button onclick="displayTimeAndComment()">Enter</button>
 			<button onclick="resetEverything()">Clear</button>
-			<button id="orbutton" onclick="overrideTime()">Override</button>
+			<button id="orbutton" onclick="overrideTime()">Edit</button>
 			<form id="textfield" autocomplete="off">
 				<input type="text" id="text" value="" />
 			</form>
@@ -33,13 +33,14 @@
 			<div class="text" id="xxx"></div>
 
 			<div id="editinfo"></div>
+			<div id="orref"></div>
 			<div class="text" id="orhelp">Index , Value</div>
 			<div style="display: flex;">
 				<form id="orindex">
 					<input class="dex" type="number" id="ordex" value="" />
 				</form>
 				<form id="orhours">
-					<input class="dex" type="number" id="orhrs" value="" />
+					<input class="dex" type="number" id="orhrs" step="any" value="" />
 				</form>
 			</div>
 		</div>
