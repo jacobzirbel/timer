@@ -18,6 +18,46 @@ let startHrs = 0,
 	pctWork = 0,
 	totalsObj = {};
 
+function saveState() {
+	localStorage.setItem("count", count);
+	localStorage.setItem("totalMin", totalMin);
+	localStorage.setItem("midnightCount", midnightCount);
+	localStorage.setItem("sCount", sCount);
+	localStorage.setItem("timeArray", JSON.stringify(timeArray));
+	localStorage.setItem("timeArrayString", JSON.stringify(timeArrayString));
+	localStorage.setItem("noteArray", JSON.stringify(noteArray));
+}
+
+function loadState() {
+	if (localStorage.getItem("count") === null) return;
+	count = parseInt(localStorage.getItem("count"));
+	totalMin = parseFloat(localStorage.getItem("totalMin"));
+	midnightCount = parseInt(localStorage.getItem("midnightCount"));
+	sCount = parseInt(localStorage.getItem("sCount"));
+	timeArray = JSON.parse(localStorage.getItem("timeArray"));
+	timeArrayString = JSON.parse(localStorage.getItem("timeArrayString"));
+	noteArray = JSON.parse(localStorage.getItem("noteArray"));
+
+	if (timeArray.length > 0) {
+		printNotes();
+		summarizeDay();
+	}
+	if (isEven(noteArray.length) && noteArray.length > 0) {
+		totalsObj = {};
+		for (let i = 0; i < noteArray.length; i += 2) {
+			totalsObj[noteArray[i]] = (totalsObj[noteArray[i]] || 0) + noteArray[i + 1] / 60;
+		}
+		for (k in totalsObj) { totalsObj[k] = totalsObj[k].toFixed(2); }
+		let e4 = document.getElementById("xx");
+		e4.innerHTML = "By activity:<br />";
+		for (let k in totalsObj) {
+			e4.innerHTML += `&nbsp;&nbsp;${k}: ${totalsObj[k]} hrs<br />`;
+		}
+	}
+}
+
+loadState();
+
 let t = setInterval(showTime, 1000);
 
 function showTime() {
@@ -110,6 +150,7 @@ function displayTimeAndComment() {
 	printNotes();
 	summarizeDay();
 	count++;
+	saveState();
 }
 
 function printNotes() {
@@ -182,6 +223,7 @@ function overrideTime() {
 
 		printNotes();
 		summarizeDay();
+		saveState();
 
 		document.getElementById("orindex").style.display = "none";
 		document.getElementById("orhours").style.display = "none";
@@ -256,6 +298,7 @@ function resetEverything() {
 	dispTimeHrs = 0;
 	dispTimeStr = "";
 	pctWork = 0;
+	localStorage.clear();
 }
 
 function summarizeDay() {
